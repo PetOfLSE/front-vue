@@ -1,46 +1,55 @@
 <template>
-  <ul>
-    <li v-for="(todo, index) in localTodos" :key="index">
-      <input type="checkbox" v-model="todo.completed" @change="saveTodos" />
-      <span :class="{ completed: todo.completed }">{{ todo.text }}</span>
-      <button @click="removeTodo(index)">삭제</button>
-    </li>
-  </ul>
+  <v-list>
+    <v-list-item
+      v-for="(todo, index) in todos"
+      :key="index"
+      :class="{ 'completed': todo.completed }"
+    >
+      <v-row align="center" no-gutters>
+        <v-col cols="auto" class="mr-3">
+          <v-checkbox
+            v-model="todo.completed"
+            @change="saveTodos"
+            hide-details
+          />
+        </v-col>
+        <v-col>
+          <v-list-item-content>
+            <v-list-item-title>{{ todo.text }}</v-list-item-title>
+          </v-list-item-content>
+        </v-col>
+        <v-col cols="auto">
+          <v-btn icon small @click="removeTodo(index)">
+            <v-icon>mdi-delete</v-icon>
+          </v-btn>
+        </v-col>
+      </v-row>
+    </v-list-item>
+  </v-list>
 </template>
 
 <script>
 export default {
-  name: 'ToDoList',
+  name: 'TodoList',
   props: {
     todos: {
       type: Array,
       required: true
     }
   },
-  data() {
-    return {
-      localTodos: [...this.todos] // todos의 복사본을 로컬 상태로 저장
-    };
-  },
-  watch: {
-    todos(newTodos) {
-      this.localTodos = [...newTodos];
-    }
-  },
   methods: {
     removeTodo(index) {
-      this.localTodos.splice(index, 1);
       this.$emit('remove-todo', index);
     },
     saveTodos() {
-      this.$emit('save-todos', this.localTodos);
+      this.$emit('save-todos');
     }
   }
 };
 </script>
 
-<style>
-.completed {
+<style scoped>
+.completed .v-list-item__title {
   text-decoration: line-through;
   color: grey;
 }
