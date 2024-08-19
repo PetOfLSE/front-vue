@@ -1,15 +1,43 @@
 <template>
   <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <AddTodo @add-todo="addTodo"/>
+  <ToDoList :todos="todos" @remove-todo="removeTodo" @save-todo="saveTodos"/>
+  
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import AddTodo from './components/AddTodo.vue'
+import ToDoList from './components/ToDoList.vue'
 
 export default {
   name: 'App',
   components: {
-    HelloWorld
+    AddTodo,
+    ToDoList
+  },
+  data(){
+    return{
+        todos:[]
+    }
+  },
+  mounted(){
+    const savedTodos = localStorage.getItem('todos');
+    if(savedTodos){
+      this.todos = JSON.parse(savedTodos);
+    }
+      },
+  methods:{
+    addTodo(newTodo){
+      this.todos.push({text: newTodo, completed: false});
+      this.saveTodos();
+    },
+    removeTodo(index){
+      this.todos.splice(index, 1)
+      this.saveTodos();
+    },
+    saveTodos(){
+      localStorage.setItem('todos', JSON.stringify(this.todos))
+    }
   }
 }
 </script>
